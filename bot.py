@@ -113,7 +113,7 @@ def main_menu() -> InlineKeyboardMarkup:
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text="🤖 ИИ-консультант", callback_data="ai_consultant"
+                    text="🤖 ИИ-консультант 24/7 — задай вопрос!", callback_data="ai_consultant"
                 )
             ],
             [
