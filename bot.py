@@ -93,9 +93,9 @@ SYSTEM_PROMPT = """
 
 # ---------- FSM СОСТОЯНИЯ для "Помощь к событию" ----------
 class EventHelper(StatesGroup):
-    waiting_event = State()    # Шаг 1: тип события
-    waiting_guests = State()   # Шаг 2: количество гостей
-    waiting_budget = State()   # Шаг 3: бюджет
+    waiting_event = State()
+    waiting_guests = State()
+    waiting_budget = State()
 
 
 # ---------- НИЖНЯЯ КНОПКА МАГАЗИНА (reply) ----------
@@ -155,7 +155,7 @@ def event_keyboard() -> InlineKeyboardMarkup:
 # ---------- /start ----------
 @dp.message(CommandStart())
 async def cmd_start(message: Message, state: FSMContext):
-    await state.clear()  # сбрасываем любой FSM при старте
+    await state.clear()
 
     caption = (
         "👋 Добро пожаловать в <b>«Мама Испекла»</b>! 🍰\n\n"
@@ -174,7 +174,8 @@ async def cmd_start(message: Message, state: FSMContext):
     )
 
     await message.answer_photo(
-        photo="https://i.ibb.co/nNHnqHSd/0188ba339143fa0e27abfc92bf635f14-9b9a98d8-327f-4c77-a570-69b306e6cb8e.png",
+        # ✅ ИЗМЕНЕНО: новый баннер
+        photo="https://i.ibb.co/ksdKDqQq/c1401f77d8e3cccf0c1a9af6d794c59e-c813fb55-0028-4974-949a-29c461b65a27.jpg",
         caption=caption,
         reply_markup=shop_keyboard(),
         parse_mode="HTML"
@@ -258,7 +259,10 @@ async def event_type_chosen(callback: CallbackQuery, state: FSMContext):
 @dp.message(EventHelper.waiting_guests)
 async def event_guests(message: Message, state: FSMContext):
     if not message.text.isdigit():
-        await message.answer("Пожалуйста, напишите число гостей цифрами, например: <b>20</b>", parse_mode="HTML")
+        await message.answer(
+            "Пожалуйста, напишите число гостей цифрами, например: <b>20</b>",
+            parse_mode="HTML"
+        )
         return
 
     guests = int(message.text)
@@ -282,13 +286,10 @@ async def event_budget(message: Message, state: FSMContext):
     event = data.get("event", "праздник")
     guests = data.get("guests", 10)
 
-    # Рассчитываем вес торта (норма: 150г на человека)
     weight_kg = round(guests * 0.15, 1)
-    # Минимум 1 кг
     if weight_kg < 1:
         weight_kg = 1.0
 
-    # Формируем запрос к ИИ
     user_query = (
         f"Мне нужна помощь с выбором торта. "
         f"Событие: {event}. "
@@ -318,7 +319,6 @@ async def event_budget(message: Message, state: FSMContext):
         print("Ошибка Groq:", e)
         ai_answer = "😔 Не удалось получить рекомендацию. Пожалуйста, обратитесь к менеджеру."
 
-    # Итоговое сообщение
     result_text = (
         f"🎉 <b>Ваша подборка для события «{event}»</b>\n\n"
         f"👥 Гостей: <b>{guests}</b>\n"
@@ -332,14 +332,7 @@ async def event_budget(message: Message, state: FSMContext):
     )
 
     await message.answer(result_text, parse_mode="HTML")
-
-    # Показываем главное меню снова
-    await message.answer(
-        "Также вам доступно 👇",
-        reply_markup=main_menu()
-    )
-
-    # Сбрасываем состояние
+    await message.answer("Также вам доступно 👇", reply_markup=main_menu())
     await state.clear()
 
 
@@ -398,7 +391,6 @@ async def ai_consultant(message: Message, state: FSMContext):
     if message.text.startswith("/"):
         return
 
-    # Если активен FSM — не перехватываем
     current_state = await state.get_state()
     if current_state is not None:
         return
