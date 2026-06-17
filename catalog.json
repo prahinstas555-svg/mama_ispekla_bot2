@@ -9,10 +9,10 @@
     "slogan": "Здесь готовят с любовью 💙"
   },
   "categories": [
-    { "id": "cakes", "name": "Торты", "emoji": "🎂" },
     { "id": "desserts", "name": "Пирожные и десерты", "emoji": "🍰" },
-    { "id": "bakery", "name": "Выпечка", "emoji": "🥐" },
     { "id": "bread", "name": "Хлеб", "emoji": "🍞" },
+    { "id": "cakes", "name": "Торты на заказ", "emoji": "🎂" },
+    { "id": "bakery", "name": "Выпечка", "emoji": "🥐" },
     { "id": "bento", "name": "Бенто-торты", "emoji": "🎁" },
     { "id": "cookies", "name": "Авторское печенье", "emoji": "🍪" }
   ],
